@@ -1,0 +1,30 @@
+import 'package:flutter/material.dart';
+
+class ResponsiveLayout extends StatelessWidget {
+  final Widget mobile;
+  final Widget tablet;
+  final Widget desktop;
+
+  const ResponsiveLayout({
+    super.key,
+    required this.mobile,
+    required this.tablet,
+    required this.desktop,
+  });
+
+  static const int mobileBreakpoint = 600; // Hasta 600px -> Mobile
+  static const int tabletBreakpoint = 1024; // 600px a 1024px -> Tablet
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
+    if (width < mobileBreakpoint) {
+      return mobile;
+    } else if (width < tabletBreakpoint) {
+      return tablet;
+    } else {
+      return desktop;
+    }
+  }
+}

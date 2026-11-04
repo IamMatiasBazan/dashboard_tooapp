@@ -1,0 +1,103 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qeishop_app_scan/src/globals/appbar.dart';
+import 'package:qeishop_app_scan/src/providers/auth_provider.dart';
+import 'package:qeishop_app_scan/src/widgets_globals/splash_screen.dart';
+
+class MatrizScreenUiResponsive extends StatefulWidget {
+  const MatrizScreenUiResponsive({super.key});
+
+  @override
+  State<MatrizScreenUiResponsive> createState() =>
+      _MatrizScreenUiResponsiveState();
+}
+
+class _MatrizScreenUiResponsiveState extends State<MatrizScreenUiResponsive> {
+  final ScrollController _scrollController = ScrollController();
+  bool cargando = false;
+  final String _titlePage = 'Título de la Sección';
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (cargando) {
+      return const SplashScreenQeiShop(text: 'Cargando datos...');
+    }
+
+    final theme = Provider.of<AuthProvider>(context).theme;
+
+    final decorationFondo = BoxDecoration(
+      gradient: LinearGradient(
+        colors: [theme.degradeSup, theme.degradeInf],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+    );
+
+    return Scaffold(
+      backgroundColor: theme.fondo,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Si es pantalla grande, centramos el layout móvil para mantener el premium look
+          if (constraints.maxWidth > 700) {
+            return Center(
+              child: Container(
+                width: 450,
+                height: double.infinity,
+                decoration: decorationFondo.copyWith(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                    ),
+                  ],
+                ),
+                child: _buildBody(),
+              ),
+            );
+          }
+
+          return Container(
+            constraints: const BoxConstraints.expand(),
+            decoration: decorationFondo,
+            child: _buildBody(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // ---------------------------------------------------------------------------
+        // 🛡 CABECERA PERSONALIZADA (Reusable Custom AppBar)
+        // ---------------------------------------------------------------------------
+        AppBarQeiShop(
+          title: _titlePage,
+          onBack: () => Navigator.pushReplacementNamed(context, '/home'),
+        ),
+
+        // ---------------------------------------------------------------------------
+        // 📦 CONTENIDO PRINCIPAL
+        // ---------------------------------------------------------------------------
+        Expanded(
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(20),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text('Contenido de la sección aquí...')],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
